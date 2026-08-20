@@ -20,6 +20,12 @@ yarn-error.log*
 
 # env
 .env*.local
+.dev.vars*
 
 # typescript
 next-env.d.ts
+
+# cloudflare / opennext
+/.open-next/
+/.wrangler/
+cloudflare-env.d.ts
