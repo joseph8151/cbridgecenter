@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FAF8F2;
+  color: #282431;
+}
+
+::selection {
+  background-color: #E9E3F3;
+  color: #201A30;
+}
+
+/* Textbook-style label, e.g. UNIT 04 / MOCK TEST 02 */
+.kicker {
+  @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-label text-purple-600;
+}
+
+.kicker::before {
+  content: "";
+  @apply block h-[3px] w-4 bg-gold-500;
+}
+
+/* Highlight span used inline in headings, e.g. TARGET 100 */
+.hl-gold {
+  @apply relative inline-block px-1;
+}
+.hl-gold::before {
+  content: "";
+  @apply absolute inset-x-0 bottom-0.5 h-[0.4em] bg-gold-100 -z-10;
+}
+
+.hl-lavender {
+  @apply relative inline-block px-1;
+}
+.hl-lavender::before {
+  content: "";
+  @apply absolute inset-x-0 bottom-0.5 h-[0.4em] bg-purple-100 -z-10;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+.wave-bar {
+  animation: wave 1s ease-in-out infinite;
+}
