@@ -55,6 +55,24 @@ export const BOOKMARKED_QUESTION_IDS: string[] = [
   "q-toefl-speak-t2-campus",
 ];
 
+// Reading/listening questions Alex Kim has attempted and answered correctly
+// — paired with MISTAKE_LOG's questionIds, this is what lets the Practice
+// filters (Completed / Correct / Incorrect) reflect real per-question state
+// instead of only ever showing "not attempted."
+export const CORRECT_QUESTION_IDS: string[] = [
+  "toefl-read-a-q2",
+  "toefl-read-a-q3",
+  "toefl-read-a-q4",
+  "ielts-read-a-q1",
+  "ielts-read-a-q2",
+  "ielts-read-a-q4",
+  "toefl-listen-a-q1",
+  "toefl-listen-b-q1",
+  "toefl-listen-b-q2",
+  "ielts-listen-a-q1",
+  "ielts-listen-a-q2",
+];
+
 export function mistakesForQuestion(questionId: string) {
   return MISTAKE_LOG.filter((m) => m.questionId === questionId);
 }
@@ -73,4 +91,16 @@ export function bookmarkedQuestions() {
 
 export function isBookmarked(questionId: string) {
   return BOOKMARKED_QUESTION_IDS.includes(questionId);
+}
+
+export function isIncorrect(questionId: string) {
+  return MISTAKE_LOG.some((m) => m.questionId === questionId);
+}
+
+export function isCorrect(questionId: string) {
+  return CORRECT_QUESTION_IDS.includes(questionId);
+}
+
+export function isCompleted(questionId: string) {
+  return isCorrect(questionId) || isIncorrect(questionId);
 }

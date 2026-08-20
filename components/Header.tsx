@@ -8,6 +8,7 @@ import { CircleUserRound } from "lucide-react";
 const NAV = [
   { href: "/test-center", label: "Test" },
   { href: "/score-lab", label: "Score Lab" },
+  { href: "/practice", label: "Practice" },
   { href: "/academy", label: "Academy" },
   { href: "/academy#pricing", label: "Pricing" },
 ];
