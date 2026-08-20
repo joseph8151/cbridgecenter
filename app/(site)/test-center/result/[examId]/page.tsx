@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { EXAMS } from "@/lib/data/exams";
 import { DEMO_USER, LATEST_MOCK } from "@/lib/data/user";
-import { estimateScore } from "@/services/mockScoring";
+import { estimateScore } from "@/services/scoring/mockScoring";
 import { MockResultCard } from "@/components/MockResultCard";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Badge } from "@/components/ui/Badge";

@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { questionById } from "@/lib/data/questions";
 import { attemptsForQuestion } from "@/lib/data/user";
-import { scoreAttempt } from "@/services/aiScoring";
+import { scoreAttempt } from "@/services/scoring/aiScoring";
 import { ScoreLabAttempt } from "@/lib/types";
 import { FeedbackCard } from "@/components/FeedbackCard";
 import { RetryComparison } from "@/components/RetryComparison";

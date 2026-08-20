@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { MOCK_EXAM_ITEMS } from "@/lib/data/mockExam";
+import { mockExamItemsFor } from "@/lib/data/mockExam";
 import { EXAMS } from "@/lib/data/exams";
 import { Modal } from "@/components/ui/Modal";
 import { formatMMSS, cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ export default function TakeTestPage() {
   const exam = EXAMS[params.examId];
   const type = search.get("type") ?? "full";
 
-  const items = MOCK_EXAM_ITEMS;
+  const items = useMemo(() => (exam ? mockExamItemsFor(exam.id) : []), [exam]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [flagged, setFlagged] = useState<Set<string>>(new Set());

@@ -1,6 +1,12 @@
-// Demo item set used by the Test Center take-test UI. Not exam-official —
-// generic, C-Bridge-authored content so we never reproduce a real test
-// publisher's material.
+// Test Center's full-screen take-flow reads from the central question bank
+// (questionBank.ts) instead of keeping its own copy — this file just
+// reshapes BankQuestion records into the ExamItem shape the take-flow UI
+// expects, and picks a fallback exam's content when the requested exam
+// doesn't have its own Reading/Listening/Speaking/Writing bank questions yet.
+
+import { BankQuestion, ExamId, ExamSectionId } from "@/lib/types";
+import { EXAMS } from "@/lib/data/exams";
+import { getQuestions } from "@/lib/data/questionBank";
 
 export type ExamItem =
   | {
@@ -34,75 +40,86 @@ export type ExamItem =
       wordLimit: number;
     };
 
-export const MOCK_EXAM_ITEMS: ExamItem[] = [
-  {
-    id: "r1",
+// Exams without their own bank Reading/Listening content yet borrow TOEFL's —
+// keeps the take-flow demoable for every exam while content is filled in.
+const CONTENT_FALLBACK: ExamId = "toefl";
+
+function questionsForExam(examId: ExamId, section: ExamSectionId): BankQuestion[] {
+  const own = getQuestions({ examId, section });
+  if (own.length) return own;
+  const sameFamily = examId.startsWith("ielts")
+    ? getQuestions({ examId: "ielts-academic", section })
+    : [];
+  if (sameFamily.length) return sameFamily;
+  return getQuestions({ examId: CONTENT_FALLBACK, section });
+}
+
+function toReadingItem(q: BankQuestion): ExamItem {
+  return {
+    id: q.id,
     section: "reading",
-    passageTitle: "Urban Green Space",
-    passage:
-      "Over the past two decades, city planners have increasingly prioritized green space as a core element of urban design rather than a decorative afterthought. Research suggests that access to parks and tree-lined streets is linked to lower stress levels and improved air quality. However, critics argue that green space initiatives can inadvertently raise property values in surrounding areas, a phenomenon sometimes called 'green gentrification,' which may displace long-time residents. Planners are now experimenting with community land trusts and rent stabilization policies to preserve the benefits of green space without the displacement effects.",
-    question: "According to the passage, what is 'green gentrification'?",
-    choices: [
-      "A policy that removes parks from wealthy neighborhoods",
-      "A rise in property values near green space that can displace residents",
-      "A method for reducing air pollution in cities",
-      "A community land trust used to build new parks",
-    ],
-  },
-  {
-    id: "r2",
-    section: "reading",
-    passageTitle: "Urban Green Space",
-    passage:
-      "Over the past two decades, city planners have increasingly prioritized green space as a core element of urban design rather than a decorative afterthought. Research suggests that access to parks and tree-lined streets is linked to lower stress levels and improved air quality. However, critics argue that green space initiatives can inadvertently raise property values in surrounding areas, a phenomenon sometimes called 'green gentrification,' which may displace long-time residents. Planners are now experimenting with community land trusts and rent stabilization policies to preserve the benefits of green space without the displacement effects.",
-    question: "What solution do planners propose to address the drawback mentioned in the passage?",
-    choices: [
-      "Removing green space from city budgets entirely",
-      "Building parks only in wealthy neighborhoods",
-      "Community land trusts and rent stabilization policies",
-      "Reducing the number of trees planted per block",
-    ],
-  },
-  {
-    id: "l1",
+    passageTitle: q.title,
+    passage: q.passage ?? "",
+    question: q.prompt,
+    choices: q.choices ?? [],
+  };
+}
+
+function toListeningItem(q: BankQuestion): ExamItem {
+  return {
+    id: q.id,
     section: "listening",
-    audioTitle: "Campus Conversation",
-    transcriptHint: "A student is talking to a professor about a research proposal deadline.",
-    question: "Why does the student visit the professor?",
-    choices: [
-      "To ask for an extension on a proposal",
-      "To drop a course",
-      "To request a letter of recommendation",
-      "To report a grading error",
-    ],
-  },
-  {
-    id: "l2",
-    section: "listening",
-    audioTitle: "Campus Conversation",
-    transcriptHint: "A student is talking to a professor about a research proposal deadline.",
-    question: "What does the professor suggest the student do?",
-    choices: [
-      "Submit the proposal early next week",
-      "Switch research topics",
-      "Meet with a teaching assistant instead",
-      "Resubmit after the semester ends",
-    ],
-  },
-  {
-    id: "s1",
+    audioTitle: q.audioTitle ?? q.title,
+    transcriptHint: q.explanation.split(". ")[0] + ".",
+    question: q.prompt,
+    choices: q.choices ?? [],
+  };
+}
+
+function toSpeakingItem(q: BankQuestion): ExamItem {
+  return {
+    id: q.id,
     section: "speaking",
-    prompt:
-      "Describe a skill you would like to learn in the future. Explain what it is and why you want to learn it.",
-    prepSeconds: 15,
-    answerSeconds: 45,
-  },
-  {
-    id: "w1",
+    prompt: q.prompt,
+    prepSeconds: q.prepTime ?? 15,
+    answerSeconds: q.answerTime ?? 45,
+  };
+}
+
+function toWritingItem(q: BankQuestion): ExamItem {
+  return {
+    id: q.id,
     section: "writing",
-    prompt:
-      "Do you agree or disagree with the following statement? Working from home is more productive than working in an office. Use specific reasons and examples to support your answer.",
-    seconds: 20 * 60,
-    wordLimit: 300,
-  },
-];
+    prompt: q.prompt,
+    seconds: q.timeLimit ?? 1200,
+    wordLimit: q.recommendedWords ?? 250,
+  };
+}
+
+/** Builds a short demo take-flow item set for one exam, limited to that
+ *  exam's real sections (e.g. TOEIC has no Speaking/Writing). */
+export function mockExamItemsFor(examId: ExamId): ExamItem[] {
+  const exam = EXAMS[examId];
+  const items: ExamItem[] = [];
+
+  if (exam.sections.includes("reading")) {
+    items.push(...questionsForExam(examId, "reading").slice(0, 2).map(toReadingItem));
+  }
+  if (exam.sections.includes("listening")) {
+    items.push(...questionsForExam(examId, "listening").slice(0, 2).map(toListeningItem));
+  }
+  if (exam.sections.includes("speaking")) {
+    const [q] = questionsForExam(examId, "speaking");
+    if (q) items.push(toSpeakingItem(q));
+  }
+  if (exam.sections.includes("writing")) {
+    const [q] = questionsForExam(examId, "writing");
+    if (q) items.push(toWritingItem(q));
+  }
+
+  return items;
+}
+
+// Backward-compatible default set (TOEFL) for any caller that hasn't been
+// updated to pass an examId yet.
+export const MOCK_EXAM_ITEMS: ExamItem[] = mockExamItemsFor("toefl");

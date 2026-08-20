@@ -8,7 +8,7 @@
 // score was produced.
 
 import { RubricCriterion, ScoreLabAttempt } from "@/lib/types";
-import { rubricFor, skillMaxFor } from "@/lib/data/questions";
+import { rubricFor, skillMaxFor } from "@/lib/data/rubrics";
 
 export interface ScoreRequest {
   questionId: string;
