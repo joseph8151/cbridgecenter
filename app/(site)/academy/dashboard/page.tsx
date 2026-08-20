@@ -7,6 +7,7 @@ import { whyThisPlan } from "@/services/studyPlanner";
 import { DailyTaskCard } from "@/components/DailyTaskCard";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { WhyThis } from "@/components/WhyThis";
+import { ScoreDisclaimer } from "@/components/ScoreDisclaimer";
 import { Badge } from "@/components/ui/Badge";
 import { daysUntil, formatDate } from "@/lib/utils";
 import {
@@ -107,6 +108,7 @@ export default function AcademyDashboardPage() {
         Estimated Score는 Full Mock 기준, AI Progress는 매일 학습 데이터를 기반으로 별도로
         산출됩니다.
       </p>
+      <ScoreDisclaimer className="mt-1" />
 
       <div className="mt-10 grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-8">

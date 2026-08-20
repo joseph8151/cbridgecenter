@@ -1,5 +1,7 @@
 import { EXAM_LIST } from "@/lib/data/exams";
 import { ExamCard } from "@/components/ExamCard";
+import { Faq } from "@/components/Faq";
+import { TEST_CENTER_FAQ } from "@/lib/data/faq";
 
 export const metadata = { title: "Test Center | C-BRIDGE" };
 
@@ -50,6 +52,19 @@ export default function TestCenterPage() {
               <p className="mt-2 text-sm text-ink-soft">{item.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="border-t border-line bg-cream py-16">
+        <div className="mx-auto max-w-3xl px-5 md:px-8">
+          <div className="text-center">
+            <span className="kicker mx-auto w-fit">FAQ</span>
+            <h2 className="mt-3 text-2xl font-extrabold text-ink">자주 묻는 질문</h2>
+          </div>
+          <div className="mt-8">
+            <Faq items={TEST_CENTER_FAQ} />
+          </div>
         </div>
       </section>
     </div>

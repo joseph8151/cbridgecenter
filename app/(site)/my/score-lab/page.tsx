@@ -3,7 +3,8 @@ import { SPEAKING_HISTORY, WRITING_HISTORY, latestAndBest } from "@/lib/data/use
 import { questionById } from "@/lib/data/questions";
 import { formatDate } from "@/lib/utils";
 import { ScoreLabAttempt } from "@/lib/types";
-import { GraduationCap } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
+import { GraduationCap, Sparkles } from "lucide-react";
 
 export const metadata = { title: "My Score Lab | C-BRIDGE" };
 
@@ -65,6 +66,17 @@ function AttemptList({
   return (
     <div className="mt-8">
       <h2 className="text-lg font-extrabold text-ink">{title}</h2>
+      {sorted.length === 0 ? (
+        <div className="mt-3">
+          <EmptyState
+            icon={Sparkles}
+            title="No Attempts Yet"
+            description={`아직 채점받은 ${skill === "speaking" ? "Speaking" : "Writing"} 답변이 없습니다. 첫 답변을 제출하고 AI 피드백을 받아보세요.`}
+            ctaLabel="Try Score Lab"
+            ctaHref="/score-lab"
+          />
+        </div>
+      ) : (
       <div className="mt-3 space-y-2.5">
         {sorted.map((a) => {
           const q = questionById(a.questionId);
@@ -94,6 +106,7 @@ function AttemptList({
           );
         })}
       </div>
+      )}
     </div>
   );
 }

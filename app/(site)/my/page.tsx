@@ -3,6 +3,7 @@ import { DEMO_USER, LATEST_MOCK, latestAndBest } from "@/lib/data/user";
 import { TODAY_TASKS } from "@/lib/data/academy";
 import { EXAMS } from "@/lib/data/exams";
 import { daysUntil, formatDate } from "@/lib/utils";
+import { ScoreDisclaimer } from "@/components/ScoreDisclaimer";
 import { PlayCircle, Mic, PenLine, FileText } from "lucide-react";
 
 export const metadata = { title: "My C-Bridge | Dashboard" };
@@ -48,6 +49,7 @@ export default function MyDashboardPage() {
         <Stat label="D-Day" value={`D-${dDay}`} />
         <Stat label="Today's Progress" value={`${doneCount}/${TODAY_TASKS.length}`} />
       </div>
+      <ScoreDisclaimer className="mt-2" />
 
       <div className="mt-8 grid gap-5 md:grid-cols-3">
         <Link

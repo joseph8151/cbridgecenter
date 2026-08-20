@@ -3,6 +3,8 @@ import { QUESTIONS } from "@/lib/data/questions";
 import { latestAndBest } from "@/lib/data/user";
 import { SCORE_LAB_PRODUCTS } from "@/lib/data/scoreLabProducts";
 import { PricingCard } from "@/components/PricingCard";
+import { Faq } from "@/components/Faq";
+import { SCORE_LAB_FAQ } from "@/lib/data/faq";
 import { formatKRW } from "@/lib/utils";
 import { Mic, PenLine, ArrowRight } from "lucide-react";
 
@@ -95,6 +97,19 @@ export default function ScoreLabPage() {
                 ctaLabel="Select"
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="border-t border-line bg-white py-16">
+        <div className="mx-auto max-w-3xl px-5 md:px-8">
+          <div className="text-center">
+            <span className="kicker mx-auto w-fit">FAQ</span>
+            <h2 className="mt-3 text-2xl font-extrabold text-ink">자주 묻는 질문</h2>
+          </div>
+          <div className="mt-8">
+            <Faq items={SCORE_LAB_FAQ} />
           </div>
         </div>
       </section>

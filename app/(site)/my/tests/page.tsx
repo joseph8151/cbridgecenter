@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { MOCK_HISTORY } from "@/lib/data/user";
 import { EXAMS } from "@/lib/data/exams";
+import { EmptyState } from "@/components/EmptyState";
 import { formatDate } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FileCheck2 } from "lucide-react";
 
 export const metadata = { title: "My Tests | C-BRIDGE" };
 
@@ -14,6 +15,17 @@ export default function MyTestsPage() {
       <h1 className="text-2xl font-extrabold text-ink">My Tests</h1>
       <p className="text-sm text-ink-soft">모의고사 응시 기록입니다.</p>
 
+      {sorted.length === 0 ? (
+        <div className="mt-6">
+          <EmptyState
+            icon={FileCheck2}
+            title="No Score Yet"
+            description="Take your first C-Bridge Mock Test to build your personalized study plan."
+            ctaLabel="TAKE MY FIRST TEST"
+            ctaHref="/test-center"
+          />
+        </div>
+      ) : (
       <div className="mt-6 space-y-3">
         {sorted.map((m) => {
           const exam = EXAMS[m.examId];
@@ -41,6 +53,7 @@ export default function MyTestsPage() {
           );
         })}
       </div>
+      )}
     </div>
   );
 }

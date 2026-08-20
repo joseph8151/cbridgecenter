@@ -1,5 +1,6 @@
 import { DEMO_USER, MOCK_HISTORY, SPEAKING_HISTORY, WRITING_HISTORY } from "@/lib/data/user";
 import { ProgressChart } from "@/components/ProgressChart";
+import { ScoreDisclaimer } from "@/components/ScoreDisclaimer";
 import { formatDate } from "@/lib/utils";
 
 export const metadata = { title: "Score Passport | C-BRIDGE" };
@@ -41,6 +42,7 @@ export default function ScorePassportPage() {
         <PassportStat label="Best Mock" value={best.estimatedScore} gold />
         <PassportStat label="AI Progress" value={`${DEMO_USER.aiProgressScore}/100`} />
       </div>
+      <ScoreDisclaimer className="mt-2" />
 
       <div className="mt-8 rounded-card border border-line bg-white p-6">
         <div className="flex items-center justify-between">
