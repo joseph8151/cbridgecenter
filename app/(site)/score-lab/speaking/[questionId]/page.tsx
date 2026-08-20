@@ -11,15 +11,20 @@ import { FeedbackCard } from "@/components/FeedbackCard";
 import { RetryComparison } from "@/components/RetryComparison";
 import { formatMMSS, cn } from "@/lib/utils";
 import { ScoreDisclaimer } from "@/components/ScoreDisclaimer";
+import { AiFallback } from "@/components/AiFallback";
 import { Mic, Play, RotateCcw, Loader2, GraduationCap, ArrowLeft, MicOff } from "lucide-react";
 
-type Phase = "intro" | "prep" | "answer" | "review" | "scoring" | "result";
+type Phase = "intro" | "prep" | "answer" | "review" | "scoring" | "result" | "error";
 
 export default function SpeakingCheckPage() {
   const params = useParams<{ questionId: string }>();
   const search = useSearchParams();
   const fromAcademy = search.get("fromAcademy") === "1";
   const isTrial = search.get("trial") === "1";
+  // Query-param-only escape hatch to exercise the AI fallback UI on demand —
+  // the mock scorer never fails on its own, so there's no user-facing button
+  // for this; it exists so the failure path is genuinely testable.
+  const simulateError = search.get("simulateError") === "1";
   const question = questionById(params.questionId);
   const history = question && !isTrial ? attemptsForQuestion(question.id, "speaking") : [];
 
@@ -74,17 +79,22 @@ export default function SpeakingCheckPage() {
   async function submitAnswer() {
     if (!question) return;
     setPhase("scoring");
-    const prev = allAttempts[allAttempts.length - 1];
-    const result = await scoreAttempt({
-      questionId: question.id,
-      examId: question.examId,
-      skill: "speaking",
-      attemptNumber: currentAttemptNumber,
-      previousScore: prev?.overallScore,
-      payload: "mock-audio",
-    });
-    setSessionAttempts((s) => [...s, result]);
-    setPhase("result");
+    try {
+      if (simulateError) throw new Error("Simulated AI scoring failure");
+      const prev = allAttempts[allAttempts.length - 1];
+      const result = await scoreAttempt({
+        questionId: question.id,
+        examId: question.examId,
+        skill: "speaking",
+        attemptNumber: currentAttemptNumber,
+        previousScore: prev?.overallScore,
+        payload: "mock-audio",
+      });
+      setSessionAttempts((s) => [...s, result]);
+      setPhase("result");
+    } catch {
+      setPhase("error");
+    }
   }
 
   if (!question) return null;
@@ -210,6 +220,12 @@ export default function SpeakingCheckPage() {
         <div className="mt-16 flex flex-col items-center gap-3 text-center">
           <Loader2 className="animate-spin text-purple-600" size={28} />
           <p className="text-sm font-semibold text-ink-soft">AI가 답변을 분석하고 있습니다...</p>
+        </div>
+      )}
+
+      {phase === "error" && (
+        <div className="mt-10">
+          <AiFallback onRetry={submitAnswer} onViewBasic={() => setPhase("review")} />
         </div>
       )}
 

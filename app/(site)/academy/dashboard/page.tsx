@@ -3,7 +3,10 @@ import { DEMO_USER } from "@/lib/data/user";
 import { EXAMS } from "@/lib/data/exams";
 import { TODAY_TASKS, SCHEDULE_4WK } from "@/lib/data/academy";
 import { NOTIFICATIONS, WEEK_STREAK, ACHIEVEMENTS } from "@/lib/data/engagement";
-import { whyThisPlan } from "@/services/studyPlanner";
+import { buildLearningProfile } from "@/lib/data/learningProfile";
+import { computeWeaknesses } from "@/services/weaknessEngine";
+import { getNextBestAction } from "@/services/recommendation/nextBestAction";
+import { computeAiProgress } from "@/services/progressEngine";
 import { DailyTaskCard } from "@/components/DailyTaskCard";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { WhyThis } from "@/components/WhyThis";
@@ -17,6 +20,7 @@ import {
   Trophy,
   ArrowRight,
   PlayCircle,
+  Target,
 } from "lucide-react";
 
 export const metadata = { title: "Academy Dashboard | C-BRIDGE" };
@@ -27,7 +31,12 @@ export default function AcademyDashboardPage() {
   const doneCount = TODAY_TASKS.filter((t) => t.status === "done").length;
   const totalMin = TODAY_TASKS.reduce((a, t) => a + t.durationMin, 0);
   const inProgressTask = TODAY_TASKS.find((t) => t.status === "in-progress");
-  const rationale = whyThisPlan("speaking", 0.5);
+
+  const profile = buildLearningProfile();
+  const weaknesses = computeWeaknesses(profile, 3);
+  const nextAction = getNextBestAction(profile);
+  const aiProgress = computeAiProgress(profile);
+  const rationale = nextAction?.reason ?? "오늘 학습은 최근 데이터를 기준으로 조정되었습니다.";
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 md:px-8">
@@ -72,6 +81,33 @@ export default function AcademyDashboardPage() {
         </Link>
       )}
 
+      {/* Next Best Action */}
+      {nextAction && (
+        <div className="mt-4 flex items-center gap-4 rounded-card border border-line bg-white p-5">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-gold-700">
+            <Target size={18} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-bold uppercase tracking-label text-gold-700">
+              Your Next Best Action
+            </p>
+            <p className="mt-0.5 font-bold text-ink">{nextAction.title}</p>
+            <p className="text-xs text-ink-soft">{nextAction.reason}</p>
+          </div>
+          <div className="shrink-0 text-right">
+            <p className="mb-1.5 text-[11px] font-semibold text-ink-soft">
+              {nextAction.estimatedMinutes} min
+            </p>
+            <Link
+              href={nextAction.href}
+              className="rounded-full bg-purple-600 px-4 py-2 text-xs font-bold text-white hover:bg-purple-700"
+            >
+              {nextAction.ctaLabel}
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Score summary */}
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="rounded-card border border-line bg-white p-4">
@@ -91,7 +127,7 @@ export default function AcademyDashboardPage() {
             AI Progress
           </p>
           <p className="mt-1 text-2xl font-extrabold tabular text-gold-600">
-            {DEMO_USER.aiProgressScore}
+            {aiProgress.value}
             <span className="text-sm text-ink-soft"> /100</span>
           </p>
         </div>
@@ -135,9 +171,9 @@ export default function AcademyDashboardPage() {
 
             <div className="mt-5 rounded-card border border-purple-200 bg-lavender p-5">
               <p className="text-[11px] font-bold uppercase tracking-label text-purple-600">
-                Why This Plan?
+                Today&apos;s Plan
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-ink">&ldquo;{rationale}&rdquo;</p>
+              <WhyThis>{rationale}</WhyThis>
             </div>
           </section>
 
@@ -203,6 +239,30 @@ export default function AcademyDashboardPage() {
             <p className="mt-3 text-xs text-ink-soft">
               Study Time Today: <span className="font-bold text-ink">{DEMO_USER.dailyStudyTime} min</span>
             </p>
+          </div>
+
+          {/* Top Weaknesses */}
+          <div className="rounded-card border border-line bg-white p-5">
+            <p className="font-bold text-ink">Top Weaknesses</p>
+            <div className="mt-3 space-y-3">
+              {weaknesses.map((w) => (
+                <Link
+                  key={`${w.section}-${w.skillTag}`}
+                  href={w.actionHref}
+                  className="block rounded-xl border border-line p-3 hover:border-purple-300"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-ink">
+                      {w.rank}. {w.skillTag}
+                    </p>
+                    <p className="text-sm font-extrabold tabular text-weak">{w.level}%</p>
+                  </div>
+                  <p className="mt-0.5 text-[11px] capitalize text-ink-soft">
+                    {w.section} · {w.relatedQuestionCount} related questions
+                  </p>
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* Notifications */}

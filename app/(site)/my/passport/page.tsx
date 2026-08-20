@@ -1,11 +1,14 @@
 import { DEMO_USER, MOCK_HISTORY, SPEAKING_HISTORY, WRITING_HISTORY } from "@/lib/data/user";
 import { ProgressChart } from "@/components/ProgressChart";
 import { ScoreDisclaimer } from "@/components/ScoreDisclaimer";
+import { buildLearningProfile } from "@/lib/data/learningProfile";
+import { computeAiProgress } from "@/services/progressEngine";
 import { formatDate } from "@/lib/utils";
 
 export const metadata = { title: "Score Passport | C-BRIDGE" };
 
 export default function ScorePassportPage() {
+  const aiProgress = computeAiProgress(buildLearningProfile());
   const sorted = [...MOCK_HISTORY].sort((a, b) => (a.date < b.date ? 1 : -1));
   const chronological = [...MOCK_HISTORY].sort((a, b) => (a.date > b.date ? 1 : -1));
 
@@ -40,7 +43,7 @@ export default function ScorePassportPage() {
         <PassportStat label="Target" value={DEMO_USER.targetScore} />
         <PassportStat label="Latest Mock" value={latest.estimatedScore} accent />
         <PassportStat label="Best Mock" value={best.estimatedScore} gold />
-        <PassportStat label="AI Progress" value={`${DEMO_USER.aiProgressScore}/100`} />
+        <PassportStat label="AI Progress" value={`${aiProgress.value}/100`} />
       </div>
       <ScoreDisclaimer className="mt-2" />
 

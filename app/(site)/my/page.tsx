@@ -2,9 +2,12 @@ import Link from "next/link";
 import { DEMO_USER, LATEST_MOCK, latestAndBest } from "@/lib/data/user";
 import { TODAY_TASKS } from "@/lib/data/academy";
 import { EXAMS } from "@/lib/data/exams";
+import { buildLearningProfile } from "@/lib/data/learningProfile";
+import { getNextBestAction } from "@/services/recommendation/nextBestAction";
 import { daysUntil, formatDate } from "@/lib/utils";
 import { ScoreDisclaimer } from "@/components/ScoreDisclaimer";
-import { PlayCircle, Mic, PenLine, FileText } from "lucide-react";
+import { WhyThis } from "@/components/WhyThis";
+import { PlayCircle, Mic, PenLine, FileText, Target } from "lucide-react";
 
 export const metadata = { title: "My C-Bridge | Dashboard" };
 
@@ -15,6 +18,7 @@ export default function MyDashboardPage() {
   const doneCount = TODAY_TASKS.filter((t) => t.status === "done").length;
   const speaking = latestAndBest("speaking");
   const writing = latestAndBest("writing");
+  const nextAction = getNextBestAction(buildLearningProfile());
 
   return (
     <div>
@@ -41,6 +45,25 @@ export default function MyDashboardPage() {
             CONTINUE
           </span>
         </Link>
+      )}
+
+      {nextAction && (
+        <div className="mt-4 rounded-card border border-gold-300 bg-gold-50 p-5">
+          <div className="flex items-center gap-2">
+            <Target size={16} className="text-gold-700" />
+            <p className="text-[10px] font-bold uppercase tracking-label text-gold-700">
+              Your Next Best Action
+            </p>
+          </div>
+          <p className="mt-1.5 font-bold text-ink">{nextAction.title}</p>
+          <WhyThis>{nextAction.reason}</WhyThis>
+          <Link
+            href={nextAction.href}
+            className="mt-4 inline-flex rounded-full bg-purple-600 px-5 py-2 text-xs font-bold text-white hover:bg-purple-700"
+          >
+            {nextAction.ctaLabel} · {nextAction.estimatedMinutes} min
+          </Link>
+        </div>
       )}
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">

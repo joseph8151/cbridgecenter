@@ -10,14 +10,16 @@ import { ScoreLabAttempt } from "@/lib/types";
 import { FeedbackCard } from "@/components/FeedbackCard";
 import { RetryComparison } from "@/components/RetryComparison";
 import { ScoreDisclaimer } from "@/components/ScoreDisclaimer";
+import { AiFallback } from "@/components/AiFallback";
 import { GraduationCap, ArrowLeft, Loader2, PenLine } from "lucide-react";
 
-type Phase = "intro" | "writing" | "scoring" | "result";
+type Phase = "intro" | "writing" | "scoring" | "result" | "error";
 
 export default function WritingCheckPage() {
   const params = useParams<{ questionId: string }>();
   const search = useSearchParams();
   const fromAcademy = search.get("fromAcademy") === "1";
+  const simulateError = search.get("simulateError") === "1";
   const question = questionById(params.questionId);
   const history = question ? attemptsForQuestion(question.id, "writing") : [];
 
@@ -38,17 +40,22 @@ export default function WritingCheckPage() {
   async function submitAnswer() {
     if (!question) return;
     setPhase("scoring");
-    const prev = allAttempts[allAttempts.length - 1];
-    const result = await scoreAttempt({
-      questionId: question.id,
-      examId: question.examId,
-      skill: "writing",
-      attemptNumber: currentAttemptNumber,
-      previousScore: prev?.overallScore,
-      payload: text,
-    });
-    setSessionAttempts((s) => [...s, result]);
-    setPhase("result");
+    try {
+      if (simulateError) throw new Error("Simulated AI scoring failure");
+      const prev = allAttempts[allAttempts.length - 1];
+      const result = await scoreAttempt({
+        questionId: question.id,
+        examId: question.examId,
+        skill: "writing",
+        attemptNumber: currentAttemptNumber,
+        previousScore: prev?.overallScore,
+        payload: text,
+      });
+      setSessionAttempts((s) => [...s, result]);
+      setPhase("result");
+    } catch {
+      setPhase("error");
+    }
   }
 
   if (!question) return null;
@@ -115,6 +122,12 @@ export default function WritingCheckPage() {
         <div className="mt-16 flex flex-col items-center gap-3 text-center">
           <Loader2 className="animate-spin text-purple-600" size={28} />
           <p className="text-sm font-semibold text-ink-soft">AI가 답변을 분석하고 있습니다...</p>
+        </div>
+      )}
+
+      {phase === "error" && (
+        <div className="mt-10">
+          <AiFallback onRetry={submitAnswer} onViewBasic={() => setPhase("writing")} />
         </div>
       )}
 
