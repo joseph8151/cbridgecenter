@@ -44,10 +44,10 @@ export function Header() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/my"
+            href="/login"
             className={cn(
               "hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-ink-soft hover:text-purple-700 sm:flex",
-              isActive("/my") && "text-purple-700"
+              (isActive("/my") || isActive("/login")) && "text-purple-700"
             )}
           >
             <CircleUserRound size={16} />

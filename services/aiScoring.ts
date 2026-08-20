@@ -8,7 +8,7 @@
 // score was produced.
 
 import { RubricCriterion, ScoreLabAttempt } from "@/lib/types";
-import { rubricFor } from "@/lib/data/questions";
+import { rubricFor, skillMaxFor } from "@/lib/data/questions";
 
 export interface ScoreRequest {
   questionId: string;
@@ -58,15 +58,15 @@ function deltaForAttempt(attemptNumber: number, questionId: string) {
 
 export async function scoreAttempt(req: ScoreRequest): Promise<ScoreLabAttempt> {
   const rubric = rubricFor(req.examId, req.skill);
-  const max = req.skill === "speaking" && req.examId.startsWith("ielts") ? 9 : req.examId === "toefl" ? 30 : 9;
-  const base = req.previousScore ?? (max === 9 ? 5.5 : 16);
-  const delta = deltaForAttempt(req.attemptNumber, req.questionId);
+  const max = skillMaxFor(req.examId);
+  const base = req.previousScore ?? roundToStep(max * 0.55, max);
+  const delta = deltaForAttempt(req.attemptNumber, req.questionId) * (max / 9);
   const overall = Math.max(0, Math.min(max, roundToStep(base + delta, max)));
 
   const criteria: RubricCriterion[] = rubric.map((c, i) => ({
     key: c.key,
     label: c.label,
-    score: Math.max(0, Math.min(max, roundToStep(overall + variance(i), max))),
+    score: Math.max(0, Math.min(max, roundToStep(overall + variance(i) * (max / 9), max))),
     max,
   }));
 

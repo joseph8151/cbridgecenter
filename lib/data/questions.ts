@@ -25,7 +25,45 @@ export const RUBRICS: Record<string, { key: string; label: string }[]> = {
     { key: "organization", label: "Organization" },
     { key: "language-use", label: "Language Use" },
   ],
+  "pte:speaking": [
+    { key: "content", label: "Content" },
+    { key: "pronunciation", label: "Pronunciation" },
+    { key: "fluency", label: "Oral Fluency" },
+  ],
+  "pte:writing": [
+    { key: "content", label: "Content" },
+    { key: "grammar", label: "Grammar" },
+    { key: "vocabulary", label: "Vocabulary Range" },
+    { key: "form", label: "Form & Spelling" },
+  ],
+  "duolingo:speaking": [
+    { key: "fluency", label: "Fluency" },
+    { key: "pronunciation", label: "Pronunciation" },
+    { key: "grammar", label: "Grammar" },
+    { key: "vocabulary", label: "Vocabulary" },
+  ],
+  "duolingo:writing": [
+    { key: "coherence", label: "Coherence" },
+    { key: "grammar", label: "Grammar" },
+    { key: "vocabulary", label: "Vocabulary" },
+    { key: "task", label: "Task Completion" },
+  ],
 };
+
+// Each exam scores Speaking/Writing on its own scale — not the exam's overall
+// score max. Keeping this as a lookup (rather than inline per-exam ifs in the
+// scoring service) makes it a single place to extend when a new exam is added.
+export const SKILL_SCORE_MAX: Record<string, number> = {
+  "ielts-academic": 9,
+  "ielts-general": 9,
+  toefl: 30,
+  pte: 90,
+  duolingo: 25,
+};
+
+export function skillMaxFor(examId: string) {
+  return SKILL_SCORE_MAX[examId] ?? 9;
+}
 
 export function rubricFor(examId: string, skill: "speaking" | "writing") {
   return RUBRICS[`${examId}:${skill}`] ?? RUBRICS[`ielts-academic:${skill}`];
@@ -80,6 +118,45 @@ export const QUESTIONS: ScoreLabQuestion[] = [
       "Do you agree or disagree with the following statement? Success in life is mostly determined by luck rather than effort. Use specific reasons and examples to support your answer.",
     answerSeconds: 30 * 60,
     wordLimit: 300,
+  },
+  {
+    id: "q-pte-speak-describe-image",
+    examId: "pte",
+    skill: "speaking",
+    part: "PTE Speaking — Describe Image",
+    prompt:
+      "Look at the graph showing university enrollment by field of study over ten years. In 25 seconds, describe what the image shows.",
+    prepSeconds: 25,
+    answerSeconds: 40,
+  },
+  {
+    id: "q-pte-write-summarize",
+    examId: "pte",
+    skill: "writing",
+    part: "PTE Writing — Summarize Written Text",
+    prompt:
+      "Summarize the following passage about renewable energy adoption in a single sentence of no more than 75 words, capturing the main point and key supporting details.",
+    answerSeconds: 10 * 60,
+    wordLimit: 75,
+  },
+  {
+    id: "q-det-speak-interview",
+    examId: "duolingo",
+    skill: "speaking",
+    part: "Duolingo English Test — Speaking Sample",
+    prompt: "Talk about a change you would like to make in your daily routine, and why.",
+    prepSeconds: 20,
+    answerSeconds: 90,
+  },
+  {
+    id: "q-det-write-photo",
+    examId: "duolingo",
+    skill: "writing",
+    part: "Duolingo English Test — Writing Sample",
+    prompt:
+      "Look at the photo of a busy city intersection. Write a description of what you see and what might happen next.",
+    answerSeconds: 5 * 60,
+    wordLimit: 150,
   },
 ];
 
