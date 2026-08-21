@@ -37,12 +37,12 @@ function hrefFor(
   return `/practice${qs ? `?${qs}` : ""}`;
 }
 
-export default function PracticePage({
+export default async function PracticePage({
   searchParams,
 }: {
-  searchParams: { exam?: string; section?: string; type?: string; difficulty?: string; skill?: string; status?: string };
+  searchParams: Promise<{ exam?: string; section?: string; type?: string; difficulty?: string; skill?: string; status?: string }>;
 }) {
-  const sp = searchParams;
+  const sp = await searchParams;
 
   let questions = getQuestions({
     examId: sp.exam,

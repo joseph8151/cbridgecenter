@@ -4,12 +4,13 @@ import { formatKRW } from "@/lib/utils";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { Check } from "lucide-react";
 
-export default function AcademyCheckoutPage({
+export default async function AcademyCheckoutPage({
   params,
 }: {
-  params: { courseId: string };
+  params: Promise<{ courseId: string }>;
 }) {
-  const course = courseById(params.courseId);
+  const { courseId } = await params;
+  const course = courseById(courseId);
   if (!course) notFound();
 
   return (

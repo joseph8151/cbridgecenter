@@ -3,12 +3,13 @@ import { scoreLabProductById } from "@/lib/data/scoreLabProducts";
 import { formatKRW } from "@/lib/utils";
 import { CheckoutForm } from "@/components/CheckoutForm";
 
-export default function ScoreLabCheckoutPage({
+export default async function ScoreLabCheckoutPage({
   params,
 }: {
-  params: { productId: string };
+  params: Promise<{ productId: string }>;
 }) {
-  const product = scoreLabProductById(params.productId);
+  const { productId } = await params;
+  const product = scoreLabProductById(productId);
   if (!product) notFound();
 
   return (

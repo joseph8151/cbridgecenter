@@ -2,8 +2,13 @@ import { notFound, redirect } from "next/navigation";
 import { getQuestion } from "@/lib/data/questionBank";
 import { PracticeQuestionView } from "./PracticeQuestionView";
 
-export default function PracticeQuestionPage({ params }: { params: { id: string } }) {
-  const question = getQuestion(params.id);
+export default async function PracticeQuestionPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const question = getQuestion(id);
   if (!question) notFound();
 
   // Speaking/Writing already have a full practice-and-score loop in Score

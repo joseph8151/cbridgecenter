@@ -7,8 +7,13 @@ import { AdminUserControls } from "@/components/admin/AdminUserControls";
 import { daysUntil, formatDate, formatKRW } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 
-export default function AdminUserDetailPage({ params }: { params: { id: string } }) {
-  const user = ADMIN_USERS.find((u) => u.id === params.id);
+export default async function AdminUserDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const user = ADMIN_USERS.find((u) => u.id === id);
   if (!user) notFound();
 
   const exam = EXAMS[user.examId];

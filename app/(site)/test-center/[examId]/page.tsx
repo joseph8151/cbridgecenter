@@ -10,8 +10,13 @@ export function generateStaticParams() {
   return Object.keys(EXAMS).map((examId) => ({ examId }));
 }
 
-export default function ExamDetailPage({ params }: { params: { examId: string } }) {
-  const exam = EXAMS[params.examId];
+export default async function ExamDetailPage({
+  params,
+}: {
+  params: Promise<{ examId: string }>;
+}) {
+  const { examId } = await params;
+  const exam = EXAMS[examId];
   if (!exam) notFound();
   const products = mockProductsForExam(exam.id);
   const extra = EXAM_EXTRA[exam.id];

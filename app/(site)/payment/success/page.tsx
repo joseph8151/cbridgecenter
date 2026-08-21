@@ -11,13 +11,14 @@ function safeInternalPath(value: string | undefined, fallback: string) {
   return value;
 }
 
-export default function PaymentSuccessPage({
+export default async function PaymentSuccessPage({
   searchParams,
 }: {
-  searchParams: { product?: string; price?: string; next?: string; nextLabel?: string };
+  searchParams: Promise<{ product?: string; price?: string; next?: string; nextLabel?: string }>;
 }) {
-  const { product = "C-Bridge Product", price = "", nextLabel = "Get Started" } = searchParams;
-  const next = safeInternalPath(searchParams.next, "/my");
+  const sp = await searchParams;
+  const { product = "C-Bridge Product", price = "", nextLabel = "Get Started" } = sp;
+  const next = safeInternalPath(sp.next, "/my");
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-lg flex-col items-center justify-center px-5 py-16 text-center">

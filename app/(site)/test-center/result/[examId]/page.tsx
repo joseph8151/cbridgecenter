@@ -50,25 +50,27 @@ const AI_COMMENTS: Record<string, string> = {
     "전체 주제는 잘 파악하지만, 세부 내용을 놓치는 경우가 있어 노트 필기 전략이 필요합니다.",
 };
 
-export default function TestResultPage({
+export default async function TestResultPage({
   params,
   searchParams,
 }: {
-  params: { examId: string };
-  searchParams: { type?: string; performance?: string };
+  params: Promise<{ examId: string }>;
+  searchParams: Promise<{ type?: string; performance?: string }>;
 }) {
-  const exam = EXAMS[params.examId];
+  const { examId } = await params;
+  const sp = await searchParams;
+  const exam = EXAMS[examId];
   if (!exam) notFound();
 
   const isDemoUserExam = exam.id === DEMO_USER.examId;
   const attempt =
-    isDemoUserExam && !searchParams.performance
+    isDemoUserExam && !sp.performance
       ? LATEST_MOCK
       : estimateScore({
           examId: exam.id,
-          type: (searchParams.type as MockType) ?? "full",
+          type: (sp.type as MockType) ?? "full",
           target: isDemoUserExam ? DEMO_USER.targetScore : Math.round(exam.scoreMax * 0.85),
-          performance: searchParams.performance ? parseFloat(searchParams.performance) : 0.68,
+          performance: sp.performance ? parseFloat(sp.performance) : 0.68,
         });
 
   const weakest: SectionScore = attempt.sections.reduce((a, b) =>

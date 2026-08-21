@@ -1,6 +1,6 @@
 # C-Bridge Center
 
-C-BRIDGE — AI 시험 대비 플랫폼 MVP (Next.js 14 App Router + TypeScript + Tailwind).
+C-BRIDGE — AI 시험 대비 플랫폼 MVP (Next.js 16 App Router + TypeScript + Tailwind).
 
 ## Local development
 
@@ -45,10 +45,6 @@ app and produces `.open-next/worker.js` + `.open-next/assets`; `wrangler deploy`
 then ships that Worker using `wrangler.jsonc`. Every push to the connected branch
 triggers this automatically once configured.
 
-**Version pin note:** `@opennextjs/cloudflare` is pinned to `1.15.1` because this
-project is on `next@14.2.35`, and newer adapter releases (`1.16+`) dropped Next 14
-support (they require `next@15.5.21+` or `16.2.11+`). Upgrading to Next 15/16 later
-would unlock the latest adapter version and also resolve several Next 14 security
-advisories (see `npm audit`) — but it requires migrating every dynamic route's
-`params`/`searchParams` to the async API Next 15 introduced, so it's a deliberate
-follow-up, not something to do casually.
+**Version pin note:** the project runs `next@16.3.1` with `@opennextjs/cloudflare@1.20.2`
+(its peer range requires `next@16.2.11+`). Every dynamic route's `params`/`searchParams`
+uses the async API required by Next 15+.

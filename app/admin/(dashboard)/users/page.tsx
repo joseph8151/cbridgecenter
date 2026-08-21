@@ -5,16 +5,17 @@ import { formatDate } from "@/lib/utils";
 
 export const metadata = { title: "Users | C-BRIDGE Admin" };
 
-export default function AdminUsersPage({
+export default async function AdminUsersPage({
   searchParams,
 }: {
-  searchParams: { q?: string; exam?: string; subscription?: string };
+  searchParams: Promise<{ q?: string; exam?: string; subscription?: string }>;
 }) {
-  const q = (searchParams.q ?? "").toLowerCase();
+  const sp = await searchParams;
+  const q = (sp.q ?? "").toLowerCase();
   const users = ADMIN_USERS.filter((u) => {
     const matchesQuery = !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
-    const matchesExam = !searchParams.exam || u.examId === searchParams.exam;
-    const matchesSub = !searchParams.subscription || u.subscription === searchParams.subscription;
+    const matchesExam = !sp.exam || u.examId === sp.exam;
+    const matchesSub = !sp.subscription || u.subscription === sp.subscription;
     return matchesQuery && matchesExam && matchesSub;
   });
 
@@ -31,13 +32,13 @@ export default function AdminUsersPage({
         <input
           type="text"
           name="q"
-          defaultValue={searchParams.q}
+          defaultValue={sp.q}
           placeholder="Search name or email..."
           className="w-64 rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-purple-400"
         />
         <select
           name="exam"
-          defaultValue={searchParams.exam ?? ""}
+          defaultValue={sp.exam ?? ""}
           className="rounded-lg border border-line px-3 py-2 text-sm text-ink outline-none focus:border-purple-400"
         >
           <option value="">All Exams</option>
@@ -47,7 +48,7 @@ export default function AdminUsersPage({
         </select>
         <select
           name="subscription"
-          defaultValue={searchParams.subscription ?? ""}
+          defaultValue={sp.subscription ?? ""}
           className="rounded-lg border border-line px-3 py-2 text-sm text-ink outline-none focus:border-purple-400"
         >
           <option value="">All Subscriptions</option>
@@ -58,7 +59,7 @@ export default function AdminUsersPage({
         <button className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-bold text-white hover:bg-purple-700">
           Filter
         </button>
-        {(searchParams.q || searchParams.exam || searchParams.subscription) && (
+        {(sp.q || sp.exam || sp.subscription) && (
           <Link href="/admin/users" className="flex items-center px-2 text-xs font-semibold text-purple-600">
             Clear
           </Link>

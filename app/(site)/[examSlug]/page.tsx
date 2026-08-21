@@ -8,8 +8,13 @@ export function generateStaticParams() {
   return Object.keys(EXAM_SLUGS).map((examSlug) => ({ examSlug }));
 }
 
-export default function ExamLandingPage({ params }: { params: { examSlug: string } }) {
-  const examId = EXAM_SLUGS[params.examSlug];
+export default async function ExamLandingPage({
+  params,
+}: {
+  params: Promise<{ examSlug: string }>;
+}) {
+  const { examSlug } = await params;
+  const examId = EXAM_SLUGS[examSlug];
   const exam = examId ? EXAMS[examId] : undefined;
   if (!exam) notFound();
   const extra = EXAM_EXTRA[exam.id];

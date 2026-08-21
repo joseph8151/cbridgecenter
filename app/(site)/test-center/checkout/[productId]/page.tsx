@@ -4,14 +4,15 @@ import { formatKRW } from "@/lib/utils";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { Check } from "lucide-react";
 
-export default function TestCenterCheckoutPage({
+export default async function TestCenterCheckoutPage({
   params,
 }: {
-  params: { productId: string };
+  params: Promise<{ productId: string }>;
 }) {
-  const examId = params.productId.split("-").slice(0, -1).join("-");
+  const { productId } = await params;
+  const examId = productId.split("-").slice(0, -1).join("-");
   const exam = EXAMS[examId];
-  const product = mockProductsForExam(examId).find((p) => p.id === params.productId);
+  const product = mockProductsForExam(examId).find((p) => p.id === productId);
   if (!exam || !product) notFound();
 
   return (

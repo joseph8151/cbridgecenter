@@ -31,13 +31,15 @@ export default function TakeTestPage() {
     Object.keys(answers).length + Object.values(recorded).filter(Boolean).length;
 
   useEffect(() => {
-    const t = setInterval(() => setRemaining((r) => Math.max(0, r - 1)), 1000);
+    const t = setInterval(() => {
+      setRemaining((r) => {
+        const next = Math.max(0, r - 1);
+        if (next === 0) setConfirmOpen(true);
+        return next;
+      });
+    }, 1000);
     return () => clearInterval(t);
   }, []);
-
-  useEffect(() => {
-    if (remaining === 0) setConfirmOpen(true);
-  }, [remaining]);
 
   function selectChoice(choice: string) {
     setAnswers((a) => ({ ...a, [item.id]: choice }));

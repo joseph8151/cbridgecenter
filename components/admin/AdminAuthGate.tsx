@@ -29,6 +29,9 @@ export function AdminAuthGate({ children }: { children: React.ReactNode }) {
       router.replace("/admin/login");
       return;
     }
+    // localStorage is only readable client-side, so this can't be computed
+    // during render without risking a server/client hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReady(true);
   }, [router]);
 
