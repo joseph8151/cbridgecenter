@@ -11,7 +11,7 @@ const ICONS = {
   vocabulary: Layers,
 };
 
-function hrefFor(task: DailyTask) {
+export function hrefFor(task: DailyTask) {
   if (task.linkedSkill === "speaking" && task.questionId) {
     return `/score-lab/speaking/${task.questionId}?fromAcademy=1`;
   }

@@ -13,5 +13,8 @@ export default function PracticeQuestionPage({ params }: { params: { id: string 
     redirect(`/score-lab/${question.section}/${question.id}`);
   }
 
-  return <PracticeQuestionView question={question} />;
+  // Keyed by question id so navigating from "Practice This Skill" to a
+  // different question id remounts this view instead of reusing state
+  // (selected answer, bookmarked) from the previous question.
+  return <PracticeQuestionView key={question.id} question={question} />;
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { DEMO_USER, LATEST_MOCK, latestAndBest } from "@/lib/data/user";
 import { TODAY_TASKS } from "@/lib/data/academy";
+import { hrefFor } from "@/components/DailyTaskCard";
 import { EXAMS } from "@/lib/data/exams";
 import { buildLearningProfile } from "@/lib/data/learningProfile";
 import { getNextBestAction } from "@/services/recommendation/nextBestAction";
@@ -28,7 +29,7 @@ export default function MyDashboardPage() {
       {/* Next Action */}
       {inProgressTask && (
         <Link
-          href={`/score-lab/writing/${inProgressTask.questionId}?fromAcademy=1`}
+          href={hrefFor(inProgressTask)}
           className="mt-6 flex items-center gap-4 rounded-card border-2 border-purple-600 bg-white p-6 hover:bg-lavender/30"
         >
           <PlayCircle className="shrink-0 text-purple-600" size={34} />

@@ -27,7 +27,8 @@ export default function TakeTestPage() {
   const [recording, setRecording] = useState(false);
 
   const item = items[index];
-  const answeredCount = Object.keys(answers).length + Object.keys(recorded).length;
+  const answeredCount =
+    Object.keys(answers).length + Object.values(recorded).filter(Boolean).length;
 
   useEffect(() => {
     const t = setInterval(() => setRemaining((r) => Math.max(0, r - 1)), 1000);

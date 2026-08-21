@@ -2,7 +2,8 @@ import Link from "next/link";
 import { WEEKLY_REPORTS } from "@/lib/data/academy";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { WhyThis } from "@/components/WhyThis";
-import { TrendingUp, ArrowLeft } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, ArrowLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Weekly Report | C-BRIDGE Academy" };
 
@@ -48,13 +49,20 @@ export default function WeeklyReportPage() {
           Section Deltas
         </p>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {Object.entries(report.deltas).map(([section, delta]) => (
-            <div key={section} className="flex items-center gap-1.5">
-              <TrendingUp size={14} className="text-success" />
-              <span className="text-sm text-ink-soft">{SECTION_LABELS[section]}</span>
-              <span className="font-bold text-success">+{delta}</span>
-            </div>
-          ))}
+          {Object.entries(report.deltas).map(([section, delta]) => {
+            const tone = delta > 0 ? "text-success" : delta < 0 ? "text-weak" : "text-ink-soft";
+            const Icon = delta > 0 ? TrendingUp : delta < 0 ? TrendingDown : Minus;
+            return (
+              <div key={section} className="flex items-center gap-1.5">
+                <Icon size={14} className={tone} />
+                <span className="text-sm text-ink-soft">{SECTION_LABELS[section]}</span>
+                <span className={cn("font-bold", tone)}>
+                  {delta > 0 ? "+" : ""}
+                  {delta}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

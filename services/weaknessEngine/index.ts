@@ -64,12 +64,12 @@ export function computeWeaknesses(profile: StudentLearningProfile, limit = 5): W
     entries.push({
       rank: 0,
       skillTag: tag,
-      section: "reading",
+      section: acc.section,
       level,
       recentChange: acc.recentChange,
       relatedQuestionCount: relatedQuestionCount(tag),
-      recommendation: recommendationFor(tag, "reading"),
-      actionHref: actionHrefFor(tag, "reading"),
+      recommendation: recommendationFor(tag, acc.section),
+      actionHref: actionHrefFor(tag, acc.section),
     });
   }
 

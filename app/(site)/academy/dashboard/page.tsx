@@ -7,7 +7,7 @@ import { buildLearningProfile } from "@/lib/data/learningProfile";
 import { computeWeaknesses } from "@/services/weaknessEngine";
 import { getNextBestAction } from "@/services/recommendation/nextBestAction";
 import { computeAiProgress } from "@/services/progressEngine";
-import { DailyTaskCard } from "@/components/DailyTaskCard";
+import { DailyTaskCard, hrefFor } from "@/components/DailyTaskCard";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { WhyThis } from "@/components/WhyThis";
 import { ScoreDisclaimer } from "@/components/ScoreDisclaimer";
@@ -64,7 +64,7 @@ export default function AcademyDashboardPage() {
       {/* Continue Training */}
       {inProgressTask && (
         <Link
-          href={`/score-lab/writing/${inProgressTask.questionId}?fromAcademy=1`}
+          href={hrefFor(inProgressTask)}
           className="mt-6 flex items-center gap-4 rounded-card border-2 border-purple-600 bg-white p-5 transition-colors hover:bg-lavender/40"
         >
           <PlayCircle className="shrink-0 text-purple-600" size={30} />
