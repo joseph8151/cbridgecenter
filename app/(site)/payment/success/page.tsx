@@ -1,13 +1,23 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 
+// `next` comes straight off the URL — only ever follow it if it's a
+// same-origin relative path. Anything else (a full URL, `javascript:`, a
+// protocol-relative `//host` path) falls back to a safe default instead of
+// becoming an open redirect / injected href.
+function safeInternalPath(value: string | undefined, fallback: string) {
+  if (!value) return fallback;
+  if (!value.startsWith("/") || value.startsWith("//")) return fallback;
+  return value;
+}
+
 export default function PaymentSuccessPage({
   searchParams,
 }: {
   searchParams: { product?: string; price?: string; next?: string; nextLabel?: string };
 }) {
-  const { product = "C-Bridge Product", price = "", next = "/my", nextLabel = "Get Started" } =
-    searchParams;
+  const { product = "C-Bridge Product", price = "", nextLabel = "Get Started" } = searchParams;
+  const next = safeInternalPath(searchParams.next, "/my");
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-lg flex-col items-center justify-center px-5 py-16 text-center">
